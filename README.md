@@ -1,4 +1,4 @@
-Zebras Discord Bot
+# Zebras Discord Bot
 
 A lighweight bot created to experiment with discord.py
 New features being constantly added
