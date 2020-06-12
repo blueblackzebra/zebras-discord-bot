@@ -153,6 +153,7 @@ async def trivia(ctx):
     #     await ctx.send("Not available here")
     #     return
 
+    ''' Check listen decorator in Bot -> https://discordpy.readthedocs.io/en/latest/ext/commands/api.html#discord.ext.commands.Bot.listen'''
 
 
     questions = []
