@@ -1,4 +1,4 @@
-import os, requests, re
+import os, requests, re, time, json, random
 from jikanpy import Jikan, AioJikan
 import discord
 from discord.ext import commands, tasks
@@ -146,6 +146,59 @@ async def yt_scrape(ctx, *args):
     
     # print (len(p))
     # print (res.text)
+
+@bot.command(name='trivia')
+async def trivia(ctx):
+    # if ctx.guild.name != "matrix":
+    #     await ctx.send("Not available here")
+    #     return
+
+
+
+    questions = []
+    with open('ques.json', 'r') as f:
+        content = f.read()
+        questions = json.loads(content)["questions"]
+        # print (questions)
+        
+    channel = ctx.channel
+    await ctx.send("Let's begin the quiz or whatever")
+
+
+    for i in range(4):
+        wait = time.time()+3
+        while time.time()<wait:
+            pass
+        p = random.randint(0,3-i)
+        # print(i, questions)
+        question = questions[p]["question"]
+        answer = questions[p]["answer"]
+        questions.pop(p)
+        kill =0
+        await ctx.send("Question "+str(i+1)+": "+question)
+        check = time.time() + 10
+        while time.time() < check:
+            async for message in channel.history(limit=2):
+                if message.content.lower() == answer:
+                    await ctx.send(message.author.name + " got it correct")
+                    kill=1
+                    break
+            if kill ==1:
+                if i==3:
+                    await ctx.send("That's all the questions")
+                else:
+                    await ctx.send("Next question in 3 secs")
+                break
+        if (kill==0):
+            await ctx.send("What a bunch of dum-dums")
+            if i==3:
+                await ctx.send("That's all the questions")
+            else:
+                await ctx.send("Next question in 3 secs")
+
+    
+
+    
 
     
 
