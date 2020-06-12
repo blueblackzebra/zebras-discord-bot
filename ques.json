@@ -1,0 +1,24 @@
+{
+    "questions" : [
+        {
+            "id": 1,
+            "question": "Type Discord",
+            "answer": "discord"
+        },
+        {
+            "id":2,
+            "question": "Type JSON",
+            "answer": "json"
+        },
+        {
+            "id":3,
+            "question": "Type Steam",
+            "answer": "steam"
+        },
+        {
+            "id":4,
+            "question": "Type Asus",
+            "answer": "asus"
+        }
+    ]
+}
