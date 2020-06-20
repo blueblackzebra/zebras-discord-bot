@@ -157,13 +157,14 @@ async def trivia(ctx):
 
 
     questions = []
+    scores = {}
     with open('ques.json', 'r') as f:
         content = f.read()
         questions = json.loads(content)["questions"]
         # print (questions)
         
     channel = ctx.channel
-    await ctx.send("Let's begin the quiz or whatever")
+    await display_trivmessage(ctx,"Let's begin the quiz or whatever")
 
 
     for i in range(4):
@@ -176,32 +177,86 @@ async def trivia(ctx):
         answer = questions[p]["answer"]
         questions.pop(p)
         kill =0
-        await ctx.send("Question "+str(i+1)+": "+question)
+        # await ctx.send("Question "+str(i+1)+": "+question)
+        await display_question(ctx,i+1,question)
         check = time.time() + 10
         while time.time() < check:
             async for message in channel.history(limit=2):
                 if message.content.lower() == answer:
-                    await ctx.send(message.author.name + " got it correct")
+                    winName = message.author.name
+                    if winName in scores:
+                        scores[winName]+=1
+                    else:
+                        scores[winName]=1
+                    await display_trivmessage(ctx, winName + " got it correct")
                     kill=1
                     break
             if kill ==1:
                 if i==3:
-                    await ctx.send("That's all the questions")
+                    await display_trivmessage(ctx,"That's all the questions")
+                    await display_winners(ctx,scores)
                 else:
-                    await ctx.send("Next question in 3 secs")
+                    await display_trivmessage(ctx,"Next question in 3 secs")
                 break
         if (kill==0):
-            await ctx.send("What a bunch of dum-dums")
+            await display_trivmessage(ctx,"What a bunch of dum-dums. The answer was *"+answer+"*")
             if i==3:
-                await ctx.send("That's all the questions")
+                await display_trivmessage(ctx,"That's all the questions")
+                await display_winners(ctx,scores)
             else:
-                await ctx.send("Next question in 3 secs")
+                await display_trivmessage(ctx, "Next question in 3 secs")
 
-    
+async def display_question(ctx,num,ques):
+    embed=discord.Embed()
+    embed.color = discord.Color.from_rgb(46,139,87)
+    embed.title="Question "+str(num)
+    embed.description=ques
 
-    
+    await ctx.send(embed=embed)
 
+async def display_winners(ctx,scores):
+    # check dict conversions of embed 
     
+    embed=discord.Embed()
+    embed.color = discord.Color.from_rgb(46,139,87)
+    embed.title="Scoreboard"
+    order = list(scores.keys())
+
+    for i in range(0,len(order)):
+        embed.add_field(name=order[i], value=scores[order[i]], inline=False)
+
+    await ctx.send(embed=embed)
+
+async def display_trivmessage(ctx,s):
+    embed=discord.Embed()
+    embed.color = discord.Color.from_rgb(46,139,87)
+    embed.description=s
+    await ctx.send(embed=embed)
+
+bot.run(TOKEN)
+
+
+# @bot.command(name='triv')
+# async def triviaAlt(ctx):
+#     questions = []
+#     with open('ques.json', 'r') as f:
+#         content = f.read()
+#         questions = json.loads(content)["questions"]
+#         # print (questions)
+        
+#     channel = ctx.channel
+#     await ctx.send("Let's begin the quiz or whatever")
+
+#     for i in range(0, len(questions)):
+#         wait = time.time()+3
+#         while time.time()<wait:
+#             pass
+#         p = random.randint(0,3-i)
+#         # print(i, questions)
+#         question = questions[p]["question"]
+#         answer = questions[p]["answer"]
+#         questions.pop(p)
+#         await ctx.send("Question "+str(i+1)+": "+question)    
 
 # @bot.command(name='play')
 # async def music(ctx, *args):
@@ -241,4 +296,3 @@ async def trivia(ctx):
 
     
 
-bot.run(TOKEN)
